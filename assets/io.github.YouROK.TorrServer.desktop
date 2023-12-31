@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=TorrServer
+Comment=Torrent stream server
+Exec=io.github.YouROK.TorrServer %u
+Icon=io.github.YouROK.TorrServer
+Terminal=true
+Type=Application
+Categories=Network;ConsoleOnly;

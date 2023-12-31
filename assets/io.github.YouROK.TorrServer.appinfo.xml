@@ -31,10 +31,9 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://github.com/faveoled/TorrServer/blob/3441b82ca31e9df99f448053f943b19d360d55a6/assets/console-help.png</image>
-      <caption>Command Help</caption>
+      <image type="source">https://github.com/faveoled/TorrServer/blob/3441b82ca31e9df99f448053f943b19d360d55a6/assets/console-help.png</image>
+      <image type="source">https://github.com/faveoled/TorrServer/blob/1e73b84b08e87b77d7c9d55654b53adc9ef6bd6a/assets/add-torrent.png</image>
     </screenshot>
-  </screenshots>
 
   <developer_name>YouROK</developer_name>
 

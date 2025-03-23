@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"server/log"
+	set "server/settings"
 	"server/torr"
 	"server/web/api/utils"
 
@@ -12,7 +13,7 @@ import (
 
 // torrentUpload godoc
 //
-//	@Summary		Only one file support
+//	@Summary		Add .torrent file
 //	@Description	Only one file support.
 //
 //	@Tags			API
@@ -20,6 +21,7 @@ import (
 //	@Param			file	formData	file	true	"Torrent file to insert"
 //	@Param			save	formData	string	false	"Save to DB"
 //	@Param			title	formData	string	false	"Torrent title"
+//	@Param			category	formData	string	false	"Torrent category"
 //	@Param			poster	formData	string	false	"Torrent poster"
 //	@Param			data	formData	string	false	"Torrent data"
 //
@@ -41,6 +43,10 @@ func torrentUpload(c *gin.Context) {
 	if len(form.Value["title"]) > 0 {
 		title = form.Value["title"][0]
 	}
+	category := ""
+	if len(form.Value["category"]) > 0 {
+		category = form.Value["category"][0]
+	}
 	poster := ""
 	if len(form.Value["poster"]) > 0 {
 		poster = form.Value["poster"][0]
@@ -51,7 +57,7 @@ func torrentUpload(c *gin.Context) {
 	}
 	var tor *torr.Torrent
 	for name, file := range form.File {
-		log.TLogln("add torrent file", name)
+		log.TLogln("add .torrent", name)
 
 		torrFile, err := file[0].Open()
 		if err != nil {
@@ -66,7 +72,15 @@ func torrentUpload(c *gin.Context) {
 			continue
 		}
 
-		tor, err = torr.AddTorrent(spec, title, poster, data)
+		tor, err = torr.AddTorrent(spec, title, poster, data, category)
+
+		if tor.Data != "" && set.BTsets.EnableDebug {
+			log.TLogln("torrent data:", tor.Data)
+		}
+		if tor.Category != "" && set.BTsets.EnableDebug {
+			log.TLogln("torrent category:", tor.Category)
+		}
+
 		if err != nil {
 			log.TLogln("error upload torrent:", err)
 			continue

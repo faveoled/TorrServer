@@ -74,19 +74,19 @@ Alternative install script for Intel Macs: <https://github.com/dancheskus/TorrSe
 
 On FreeBSD (TrueNAS/FreeNAS) you can use this plugin: <https://github.com/filka96/iocage-plugin-TorrServer>
 
-#### For NAS Systems (Unofficial)
+#### NAS Systems (Unofficial)
 
 - Several releases are available through this link: <https://github.com/vladlenas>
 - **Synology NAS** packages repo source: <https://grigi.lt>
 
 ### Server args
 
-- `--port PORT`, `-p PORT` - web server port, default 8090
+- `--port PORT`, `-p PORT` - web server port (default 8090)
 - `--ssl` - enables https for web server
-- `--sslport PORT` -  web server https port, default 8091. If not set, will be taken from db (if stored previously) or use default.
+- `--sslport PORT` -  web server https port (default 8091). If not set, will be taken from db (if stored previously) or the default will be used.
 - `--sslcert PATH` -  path to ssl cert file. If not set, will be taken from db (if stored previously) or default self-signed certificate/key will be generated.
 - `--sslkey PATH` - path to ssl key file. If not set, will be taken from db (if stored previously) or default self-signed certificate/key will be generated.
-- `--path PATH`, `-d PATH` - database dir path
+- `--path PATH`, `-d PATH` - database and config dir path
 - `--logpath LOGPATH`, `-l LOGPATH` - server log file path
 - `--weblogpath WEBLOGPATH`, `-w WEBLOGPATH` - web access log file path
 - `--rdb`, `-r` - start in read-only DB mode
@@ -147,6 +147,7 @@ services:
     torrserver:
         image: ghcr.io/yourok/torrserver
         container_name: torrserver
+        network_mode: host    # to allow DLNA feature
         environment:
             - TS_PORT=5665
             - TS_DONTKILL=1
@@ -159,19 +160,44 @@ services:
         ports:
             - '5665:5665'
         restart: unless-stopped
+        
 
 ```
 
-#### NAS releases
-https://github.com/vladlenas
+### Smart TV (using Media Station X)
 
-Synology NAS packages repo source: https://grigi.lt
+1. Install **Media Station X** on your Smart TV (see [platform support](https://msx.benzac.de/info/?tab=PlatformSupport))
+
+2. Open it and go to: **Settings -> Start Parameter -> Setup**
+
+3. Enter current ip and port of the TorrServe(r), e.g. `127.0.0.1:8090`
+
+## Development
+
+#### Go server
+
+To run the Go server locally, just run
+
+```bash
+cd server
+go run ./cmd
+```
+
+#### Web development
+
+To run the web server locally, just run
+
+```bash
+yarn start
+```
+
+More info at https://github.com/YouROK/TorrServer/tree/master/web#readme
 
 ### Build
 
 #### Server
 
-- Install [Golang](https://golang.org/doc/install) 1.18+
+- Install [Golang](https://golang.org/doc/install) 1.20+
 - Go to the TorrServer source directory
 - Run build script under linux or macOS `build-all.sh`
 
@@ -196,22 +222,15 @@ cd server; swag init -g web/server.go
 # Documentation can be linted using
 swag fmt
 ```
-
-### MSX Install
-
-Open msx and goto: Settings -> Start Parameter -> Setup
-
-Enter current ip address and port of server _e.g. 127.0.0.1:8090_
-
 ## API
 
 ### API Docs
 
 API documentation is hosted as Swagger format available at path `/swagger/index.html`.
 
-### API Authentication
+## Authentication
 
-The user data file should be located near to the settings. Basic auth, read more in wiki <https://en.wikipedia.org/wiki/Basic_access_authentication>.
+The users data file should be located near to the settings. Basic auth, read more in wiki <https://en.wikipedia.org/wiki/Basic_access_authentication>.
 
 `accs.db` in JSON format:
 
@@ -221,6 +240,7 @@ The user data file should be located near to the settings. Basic auth, read more
     "User2": "Pass2"
 }
 ```
+Note: You should enable authentication with -a (--httpauth) TorrServer startup option.
 
 ## Whitelist/Blacklist IP
 
@@ -243,25 +263,27 @@ local:127.0.0.1
 
 ## Donate
 
-- [QIWI](https://qiwi.com/n/YOUROK85)
 - [YooMoney](https://yoomoney.ru/to/410013733697114/200)
-- [PayPal](https://www.paypal.me/yourok)
 - SberBank Card: **5484 4000 2285 7839**
-- YooMoney Card: **4048 4150 1812 8179**
+
 
 ## Thanks to everyone who tested and helped
 
-- [anacrolix (Matt Joiner)](https://github.com/anacrolix)
+- [anacrolix](https://github.com/anacrolix) Matt Joiner
 - [tsynik](https://github.com/tsynik)
-- [dancheskus](https://github.com/dancheskus)
-- [kolsys](https://github.com/kolsys)
-- [vladlenas](https://github.com/vladlenas)
-- [Nemiroff (Tw1cker)](https://github.com/Nemiroff)
-- [spawnlmg (SpAwN_LMG)](https://github.com/spawnlmg)
-- [TopperBG (Dimitar Maznekov)](https://github.com/TopperBG)
-- [FaintGhost (Zhang Yaowei)](https://github.com/FaintGhost)
-- [Anton111111 (Anton Potekhin)](https://github.com/Anton111111)
-- [lieranderl (Evgeni)](https://github.com/lieranderl)
-- [cocool97](https://github.com/cocool97)
-- [shadeov](https://github.com/shadeov)
+- [dancheskus](https://github.com/dancheskus) for react web GUI and PWA code
+- [kolsys](https://github.com/kolsys) for initial Media Station X support
+- [damiva](https://github.com/damiva) for Media Station X code updates
+- [vladlenas](https://github.com/vladlenas) for NAS builds
+- [Nemiroff](https://github.com/Nemiroff) Tw1cker
+- [spawnlmg](https://github.com/spawnlmg) SpAwN_LMG for testing
+- [TopperBG](https://github.com/TopperBG) Dimitar Maznekov for Bulgarian web translation
+- [FaintGhost](https://github.com/FaintGhost) Zhang Yaowei for Simplified Chinese web translation
+- [Anton111111](https://github.com/Anton111111) Anton Potekhin for sleep on Windows fixes
+- [lieranderl](https://github.com/lieranderl) Evgeni for adding SSL support code
+- [cocool97](https://github.com/cocool97) for openapi API documentation and torrent categories
+- [shadeov](https://github.com/shadeov) for README improvements
+- [butaford](https://github.com/butaford) Pavel for make docker file and scripts
+- [filimonic](https://github.com/filimonic) Alexey D. Filimonov
+- [leporel](https://github.com/leporel) Viacheslav Evseev
 - and others

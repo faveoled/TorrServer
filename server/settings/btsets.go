@@ -51,6 +51,9 @@ type BTSets struct {
 	SslPort int
 	SslCert string
 	SslKey  string
+
+	// Reader
+	ResponsiveMode bool // enable Responsive reader (don't wait pieceComplete)
 }
 
 func (v *BTSets) String() string {
@@ -150,6 +153,6 @@ func loadBTSets() {
 		}
 		log.TLogln("Error unmarshal btsets", err)
 	}
-
+	// initialize defaults on error
 	SetDefaultConfig()
 }
